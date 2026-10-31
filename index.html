@@ -158,13 +158,14 @@ input[type=date],input[type=number],select{background:var(--panel-2);border:1px 
 
 /* Đố vui */
 .score-board{display:flex;gap:18px;align-items:baseline}
+.review{margin:8px 0 0;padding-left:18px;display:grid;gap:10px;font-size:14px}
 .score-board strong{font-family:var(--f-display);font-size:28px;font-weight:500;font-variant-numeric:tabular-nums}
 
 footer{border-top:1px solid var(--line);padding-block:24px 40px;color:var(--muted);font-size:13px}
 
 @media (max-width:760px){
   .hero{grid-template-columns:1fr;padding-block:28px 12px}
-  .wheel-box{justify-self:center;max-width:300px;order:-1}
+  .wheel-box{justify-self:center;max-width:190px;order:-1}
   .tv-grid,.result,.score-wrap{grid-template-columns:1fr}
   .big-glyph{width:88px;height:88px;font-size:42px}
   .opts,.two,.areas{grid-template-columns:1fr}
@@ -185,7 +186,7 @@ footer{border-top:1px solid var(--line);padding-block:24px 40px;color:var(--mute
     <div>
       <div class="today"><span class="seal" aria-hidden="true">星</span><span class="label" id="todayLabel">Lịch sao hôm nay</span></div>
       <h1>Tinh Bàn <em>Hoàng Đạo</em></h1>
-      <p class="lede">Làm quiz xem tính cách bạn giống cung nào, đọc tử vi hằng ngày theo ngày sinh, xem tuổi hợp đôi và thử kiến thức về 12 cung, 12 con giáp.</p>
+      <p class="lede">Quiz kiến thức về 12 cung hoàng đạo: ngày sinh, nguyên tố, hành tinh chủ quản, biểu tượng, thần thoại. Kèm tử vi hằng ngày và xem hợp đôi.</p>
     </div>
     <div class="wheel-box"><canvas id="wheel" aria-label="Vòng hoàng đạo 12 cung" role="img"></canvas></div>
   </header>
@@ -193,16 +194,16 @@ footer{border-top:1px solid var(--line);padding-block:24px 40px;color:var(--mute
 
 <nav class="tabs" aria-label="Các mục">
   <div class="wrap">
-    <a href="#quiz" data-view="quiz">Quiz tính cách</a>
+    <a href="#do-vui" data-view="do-vui">Quiz kiến thức</a>
+    <a href="#quiz" data-view="quiz">Bạn giống cung nào?</a>
     <a href="#tu-vi" data-view="tu-vi">Tử vi hằng ngày</a>
     <a href="#hop-doi" data-view="hop-doi">Xem hợp đôi</a>
-    <a href="#do-vui" data-view="do-vui">Đố vui chiêm tinh</a>
   </div>
 </nav>
 
 <main class="wrap">
   <!-- QUIZ -->
-  <section class="view" id="v-quiz">
+  <section class="view" id="v-quiz" hidden>
     <div class="view-head">
       <h2>Tính cách bạn giống cung nào?</h2>
       <p class="intro">8 câu hỏi. Năm câu đầu đo nguyên tố (Lửa, Đất, Khí, Nước), ba câu sau đo nhịp hành động. Hai yếu tố này ghép lại cho ra đúng một trong 12 cung.</p>
@@ -262,10 +263,10 @@ footer{border-top:1px solid var(--line);padding-block:24px 40px;color:var(--mute
   </section>
 
   <!-- ĐỐ VUI -->
-  <section class="view" id="v-do-vui" hidden>
+  <section class="view" id="v-do-vui">
     <div class="view-head">
-      <h2>Đố vui chiêm tinh</h2>
-      <p class="intro">10 câu hỏi ngẫu nhiên về cung hoàng đạo, con giáp và ngũ hành. Mỗi câu có lời giải thích sau khi trả lời.</p>
+      <h2>Bạn hiểu cung hoàng đạo đến đâu?</h2>
+      <p class="intro">Mỗi lượt 15 câu ngẫu nhiên về ngày sinh, nguyên tố, hành tinh chủ quản, biểu tượng và thần thoại của 12 cung. Trả lời xong mỗi câu sẽ có giải thích.</p>
     </div>
     <div class="panel" id="triviaBox"></div>
   </section>
@@ -405,7 +406,7 @@ $('#todayLabel').textContent='Lịch sao · '+fmt(now)+' · năm '+canChi(now.ge
 /* ---------- Router ---------- */
 const VIEWS=['quiz','tu-vi','hop-doi','do-vui'];
 function route(){
-  const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'quiz';
+  const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'do-vui';
   VIEWS.forEach(n=>{$('#v-'+n).hidden=n!==v});
   document.querySelectorAll('.tabs a').forEach(a=>{if(a.dataset.view===v)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
 }
@@ -615,39 +616,89 @@ pairCalc();
 
 /* ---------- ĐỐ VUI ---------- */
 const TQ=[
- {q:'Cung nào mở đầu vòng hoàng đạo?',o:['Bạch Dương','Song Ngư','Ma Kết','Bảo Bình'],a:0,e:'Vòng hoàng đạo bắt đầu từ điểm xuân phân (khoảng 21/3), là lúc Mặt Trời vào cung Bạch Dương.'},
- {q:'Bảo Bình thuộc nguyên tố nào?',o:['Nước','Khí','Đất','Lửa'],a:1,e:'Dù biểu tượng là người mang bình nước, Bảo Bình thuộc nhóm Khí cùng Song Tử và Thiên Bình.'},
- {q:'Hành tinh chủ quản của Sư Tử là gì?',o:['Sao Hỏa','Sao Mộc','Mặt Trời','Sao Kim'],a:2,e:'Sư Tử là cung duy nhất do Mặt Trời cai quản, nên thường được gắn với sự tỏa sáng.'},
- {q:'Trong 12 con giáp của Việt Nam, con vật nào thay cho Thỏ?',o:['Mèo','Chồn','Cáo','Sóc'],a:0,e:'Người Việt dùng Mèo cho chi Mão, trong khi Trung Quốc dùng Thỏ.'},
- {q:'Con giáp đứng đầu trong 12 con giáp là?',o:['Trâu','Hổ','Rồng','Chuột'],a:3,e:'Thứ tự bắt đầu từ Tý (Chuột), rồi đến Sửu (Trâu), Dần (Hổ)…'},
- {q:'Người sinh ngày 14/2 thuộc cung nào?',o:['Song Ngư','Bảo Bình','Ma Kết','Bạch Dương'],a:1,e:'Bảo Bình kéo dài từ 20/1 đến 18/2. Song Ngư bắt đầu từ 19/2.'},
- {q:'Bộ ba nào là tam hợp?',o:['Tý – Ngọ – Mão','Dần – Thân – Tỵ','Thân – Tý – Thìn','Sửu – Mùi – Tuất'],a:2,e:'Bốn nhóm tam hợp là Thân–Tý–Thìn, Dần–Ngọ–Tuất, Tỵ–Dậu–Sửu và Hợi–Mão–Mùi. Các đáp án còn lại đều là tứ hành xung.'},
- {q:`Năm 2026 là năm gì theo Can Chi?`,o:['Ất Tỵ','Bính Ngọ','Đinh Mùi','Giáp Thìn'],a:1,e:'2026 là năm Bính Ngọ. Năm 2025 là Ất Tỵ, 2027 là Đinh Mùi.'},
- {q:'Cung nào có biểu tượng con dê biển, nửa dê nửa cá?',o:['Kim Ngưu','Bạch Dương','Ma Kết','Song Ngư'],a:2,e:'Ma Kết được vẽ là con dê có đuôi cá, tượng trưng cho khả năng leo núi lẫn lặn sâu.'},
- {q:'Theo ngũ hành tương sinh, Mộc sinh ra hành nào?',o:['Thổ','Thủy','Kim','Hỏa'],a:3,e:'Gỗ cháy sinh ra lửa: Mộc sinh Hỏa. Vòng tương sinh là Kim → Thủy → Mộc → Hỏa → Thổ → Kim.'},
- {q:'Xử Nữ do hành tinh nào chủ quản?',o:['Sao Thủy','Sao Thổ','Mặt Trăng','Sao Kim'],a:0,e:'Sao Thủy cai quản cả Song Tử và Xử Nữ: một bên thiên về giao tiếp, một bên thiên về phân tích.'},
- {q:'Thiên can gồm bao nhiêu can?',o:['12','10','8','5'],a:1,e:'10 thiên can: Giáp, Ất, Bính, Đinh, Mậu, Kỷ, Canh, Tân, Nhâm, Quý. Ghép với 12 địa chi tạo thành chu kỳ 60 năm.'},
- {q:'Cung nào thuộc nguyên tố Nước?',o:['Nhân Mã','Thiên Bình','Bọ Cạp','Kim Ngưu'],a:2,e:'Nhóm Nước gồm Cự Giải, Bọ Cạp và Song Ngư.'},
- {q:'Người tuổi Hợi tứ hành xung với tuổi nào?',o:['Mão','Thân','Mùi','Tý'],a:1,e:'Nhóm Dần – Thân – Tỵ – Hợi là một bộ tứ hành xung.'}
+ // Kiến thức chung
+ {t:'Kiến thức chung',q:'Vòng hoàng đạo trong chiêm tinh có bao nhiêu cung?',a:'12',w:['10','13','24'],e:'Chiêm tinh chia hoàng đạo thành 12 cung bằng nhau. Chòm sao Xà Phu cũng nằm trên đường hoàng đạo nhưng không được tính thành cung.'},
+ {t:'Kiến thức chung',q:'Mỗi cung hoàng đạo chiếm bao nhiêu độ trên vòng tròn?',a:'30°',w:['15°','24°','36°'],e:'360° chia đều cho 12 cung, mỗi cung đúng 30°.'},
+ {t:'Kiến thức chung',q:'Cung nào mở đầu vòng hoàng đạo?',a:'Bạch Dương',w:['Song Ngư','Ma Kết','Bảo Bình'],e:'Vòng hoàng đạo bắt đầu từ điểm xuân phân (khoảng 21/3), lúc Mặt Trời đi vào Bạch Dương.'},
+ {t:'Kiến thức chung',q:'Cung nào đứng cuối cùng (thứ 12) trên vòng hoàng đạo?',a:'Song Ngư',w:['Ma Kết','Bảo Bình','Bọ Cạp'],e:'Thứ tự kết thúc bằng Ma Kết, Bảo Bình rồi Song Ngư, sau đó vòng lặp lại ở Bạch Dương.'},
+ {t:'Kiến thức chung',q:'Từ "zodiac" (hoàng đạo) có gốc tiếng Hy Lạp nghĩa là gì?',a:'Vòng tròn các con vật',w:['Con đường của các vị thần','Bản đồ các vì sao','Vòng quay của thời gian'],e:'"Zōidiakos kyklos" nghĩa là vòng tròn các con vật nhỏ, vì phần lớn các cung mang hình con vật.'},
+ {t:'Kiến thức chung',q:'"Cung hoàng đạo" mà ta hay nói (ví dụ "tớ là Sư Tử") được xác định bởi vị trí của thiên thể nào lúc bạn sinh ra?',a:'Mặt Trời',w:['Mặt Trăng','Sao Kim','Sao Bắc Đẩu'],e:'Đó là cung Mặt Trời. Ngoài ra còn cung Mặt Trăng và cung Mọc, tính theo vị trí khác trong bản đồ sao.'},
+ {t:'Kiến thức chung',q:'Muốn biết "cung Mọc" (Ascendant), bạn cần thêm thông tin gì ngoài ngày sinh?',a:'Giờ và nơi sinh',w:['Nhóm máu','Năm sinh âm lịch','Tên khai sinh'],e:'Cung Mọc là cung đang lên ở chân trời phía đông lúc bạn sinh, đổi khoảng 2 giờ một lần nên cần giờ và nơi sinh chính xác.'},
+ {t:'Kiến thức chung',q:'Chòm sao Xà Phu (Ophiuchus) nằm giữa hai cung nào trên đường hoàng đạo?',a:'Bọ Cạp và Nhân Mã',w:['Song Ngư và Bạch Dương','Xử Nữ và Thiên Bình','Ma Kết và Bảo Bình'],e:'Mặt Trời đi qua Xà Phu khoảng cuối tháng 11 đến giữa tháng 12, nhưng chiêm tinh vẫn chỉ dùng 12 cung.'},
+ {t:'Kiến thức chung',q:'"Sao Thủy nghịch hành" là hiện tượng gì?',a:'Sao Thủy trông như đi lùi trên bầu trời khi nhìn từ Trái Đất',w:['Sao Thủy đổi chiều quay quanh Mặt Trời','Sao Thủy bị Mặt Trời che khuất hoàn toàn','Sao Thủy đi gần Trái Đất nhất trong năm'],e:'Đây là ảo ảnh do Trái Đất và Sao Thủy chuyển động với tốc độ khác nhau. Hiện tượng xảy ra khoảng 3 lần mỗi năm.'},
+ // Ngày sinh
+ {t:'Ngày sinh',q:'Người sinh ngày 1/1 thuộc cung nào?',a:'Ma Kết',w:['Bảo Bình','Nhân Mã','Song Ngư'],e:'Ma Kết kéo dài từ 22/12 đến 19/1.'},
+ {t:'Ngày sinh',q:'Người sinh ngày Valentine 14/2 thuộc cung nào?',a:'Bảo Bình',w:['Song Ngư','Ma Kết','Bạch Dương'],e:'Bảo Bình từ 20/1 đến 18/2. Song Ngư bắt đầu từ 19/2.'},
+ {t:'Ngày sinh',q:'Người sinh ngày 8/3 thuộc cung nào?',a:'Song Ngư',w:['Bạch Dương','Bảo Bình','Kim Ngưu'],e:'Song Ngư từ 19/2 đến 20/3.'},
+ {t:'Ngày sinh',q:'Người sinh ngày 1/4 thuộc cung nào?',a:'Bạch Dương',w:['Kim Ngưu','Song Ngư','Song Tử'],e:'Bạch Dương từ 21/3 đến 19/4.'},
+ {t:'Ngày sinh',q:'Người sinh ngày 1/6 thuộc cung nào?',a:'Song Tử',w:['Kim Ngưu','Cự Giải','Sư Tử'],e:'Song Tử từ 21/5 đến 20/6.'},
+ {t:'Ngày sinh',q:'Người sinh ngày 2/9 thuộc cung nào?',a:'Xử Nữ',w:['Sư Tử','Thiên Bình','Bọ Cạp'],e:'Xử Nữ từ 23/8 đến 22/9.'},
+ {t:'Ngày sinh',q:'Người sinh ngày 20/11 thuộc cung nào?',a:'Bọ Cạp',w:['Nhân Mã','Thiên Bình','Ma Kết'],e:'Bọ Cạp từ 23/10 đến 21/11. Nhân Mã bắt đầu từ 22/11.'},
+ {t:'Ngày sinh',q:'Người sinh ngày Giáng sinh 25/12 thuộc cung nào?',a:'Ma Kết',w:['Nhân Mã','Bảo Bình','Bọ Cạp'],e:'Ma Kết bắt đầu từ 22/12, nên 25/12 đã là Ma Kết.'},
+ {t:'Ngày sinh',q:'Người sinh ngày 1/8 thuộc cung nào?',a:'Sư Tử',w:['Cự Giải','Xử Nữ','Song Tử'],e:'Sư Tử từ 23/7 đến 22/8.'},
+ // Nguyên tố & nhóm
+ {t:'Nguyên tố',q:'Bảo Bình thuộc nguyên tố nào?',a:'Khí',w:['Nước','Đất','Lửa'],e:'Dù biểu tượng là người mang bình nước, Bảo Bình thuộc nhóm Khí cùng Song Tử và Thiên Bình.'},
+ {t:'Nguyên tố',q:'Bọ Cạp thuộc nguyên tố nào?',a:'Nước',w:['Lửa','Đất','Khí'],e:'Nhóm Nước gồm Cự Giải, Bọ Cạp và Song Ngư.'},
+ {t:'Nguyên tố',q:'Bộ ba nào thuộc nguyên tố Lửa?',a:'Bạch Dương, Sư Tử, Nhân Mã',w:['Bạch Dương, Bọ Cạp, Ma Kết','Sư Tử, Thiên Bình, Song Tử','Nhân Mã, Xử Nữ, Song Ngư'],e:'Ba cung Lửa cách nhau đúng 120° trên vòng hoàng đạo, tạo thành một tam giác.'},
+ {t:'Nguyên tố',q:'Bộ ba nào thuộc nguyên tố Đất?',a:'Kim Ngưu, Xử Nữ, Ma Kết',w:['Kim Ngưu, Cự Giải, Bọ Cạp','Xử Nữ, Song Tử, Thiên Bình','Ma Kết, Bảo Bình, Song Ngư'],e:'Nhóm Đất được gắn với sự thực tế, ổn định và chăm chỉ.'},
+ {t:'Nguyên tố',q:'Cung nào dưới đây thuộc nguyên tố Khí?',a:'Thiên Bình',w:['Kim Ngưu','Cự Giải','Sư Tử'],e:'Nhóm Khí gồm Song Tử, Thiên Bình và Bảo Bình.'},
+ {t:'Nguyên tố',q:'Nhóm "Cố định" (Fixed) gồm những cung nào?',a:'Kim Ngưu, Sư Tử, Bọ Cạp, Bảo Bình',w:['Bạch Dương, Cự Giải, Thiên Bình, Ma Kết','Song Tử, Xử Nữ, Nhân Mã, Song Ngư','Kim Ngưu, Xử Nữ, Ma Kết, Bảo Bình'],e:'Các cung Cố định nằm giữa mỗi mùa, nổi tiếng kiên định và bền bỉ.'},
+ {t:'Nguyên tố',q:'Nhóm "Biến đổi" (Mutable) gồm những cung nào?',a:'Song Tử, Xử Nữ, Nhân Mã, Song Ngư',w:['Kim Ngưu, Sư Tử, Bọ Cạp, Bảo Bình','Bạch Dương, Cự Giải, Thiên Bình, Ma Kết','Song Tử, Sư Tử, Nhân Mã, Ma Kết'],e:'Các cung Biến đổi nằm cuối mỗi mùa, linh hoạt và dễ thích nghi.'},
+ {t:'Nguyên tố',q:'Mặt Trời đi vào cung Cự Giải vào dịp nào trong năm?',a:'Hạ chí',w:['Xuân phân','Thu phân','Đông chí'],e:'Bốn cung Thống lĩnh mở đầu bốn mùa: Bạch Dương (xuân phân), Cự Giải (hạ chí), Thiên Bình (thu phân), Ma Kết (đông chí).'},
+ {t:'Nguyên tố',q:'Thu phân (khoảng 23/9) là lúc Mặt Trời đi vào cung nào?',a:'Thiên Bình',w:['Xử Nữ','Bọ Cạp','Nhân Mã'],e:'Thu phân là lúc ngày và đêm dài bằng nhau, hợp với biểu tượng cái cân của Thiên Bình.'},
+ // Chủ tinh
+ {t:'Chủ tinh',q:'Hành tinh chủ quản của Sư Tử là gì?',a:'Mặt Trời',w:['Sao Hỏa','Sao Mộc','Sao Kim'],e:'Sư Tử là cung duy nhất do Mặt Trời cai quản.'},
+ {t:'Chủ tinh',q:'Cung nào do Mặt Trăng chủ quản?',a:'Cự Giải',w:['Song Ngư','Thiên Bình','Xử Nữ'],e:'Mặt Trăng gắn với cảm xúc, gia đình và sự che chở, đúng tinh thần của Cự Giải.'},
+ {t:'Chủ tinh',q:'Hành tinh chủ quản của Bạch Dương là gì?',a:'Sao Hỏa',w:['Sao Kim','Sao Mộc','Sao Thổ'],e:'Sao Hỏa (Mars) mang tên thần chiến tranh, hợp với tính xông xáo của Bạch Dương.'},
+ {t:'Chủ tinh',q:'Kim Ngưu và Thiên Bình cùng do hành tinh nào chủ quản?',a:'Sao Kim',w:['Sao Thủy','Mặt Trăng','Sao Mộc'],e:'Sao Kim (Venus) là hành tinh của tình yêu và cái đẹp.'},
+ {t:'Chủ tinh',q:'Song Tử và Xử Nữ cùng do hành tinh nào chủ quản?',a:'Sao Thủy',w:['Sao Kim','Sao Thổ','Sao Hỏa'],e:'Sao Thủy (Mercury) gắn với tư duy và giao tiếp: Song Tử thiên về nói, Xử Nữ thiên về phân tích.'},
+ {t:'Chủ tinh',q:'Hành tinh chủ quản của Nhân Mã là gì?',a:'Sao Mộc',w:['Sao Thổ','Sao Hỏa','Sao Thiên Vương'],e:'Sao Mộc (Jupiter), hành tinh lớn nhất, tượng trưng cho may mắn và mở rộng.'},
+ {t:'Chủ tinh',q:'Hành tinh chủ quản của Ma Kết là gì?',a:'Sao Thổ',w:['Sao Mộc','Sao Kim','Sao Diêm Vương'],e:'Sao Thổ (Saturn) gắn với kỷ luật, thời gian và trách nhiệm.'},
+ {t:'Chủ tinh',q:'Theo chiêm tinh hiện đại, Bảo Bình do hành tinh nào chủ quản?',a:'Sao Thiên Vương',w:['Sao Hải Vương','Sao Diêm Vương','Sao Mộc'],e:'Sao Thiên Vương được phát hiện năm 1781 và gắn với sự đổi mới. Chiêm tinh cổ điển dùng Sao Thổ cho Bảo Bình.'},
+ {t:'Chủ tinh',q:'Theo chiêm tinh hiện đại, Song Ngư do hành tinh nào chủ quản?',a:'Sao Hải Vương',w:['Sao Thiên Vương','Mặt Trăng','Sao Kim'],e:'Sao Hải Vương mang tên thần biển, hợp với cung Nước mơ mộng này. Chiêm tinh cổ điển dùng Sao Mộc.'},
+ {t:'Chủ tinh',q:'Theo chiêm tinh hiện đại, Bọ Cạp do hành tinh nào chủ quản?',a:'Sao Diêm Vương',w:['Sao Thổ','Sao Hải Vương','Mặt Trời'],e:'Sao Diêm Vương (Pluto) mang tên thần cõi âm, gắn với sự biến đổi sâu sắc. Chiêm tinh cổ điển dùng Sao Hỏa.'},
+ // Biểu tượng
+ {t:'Biểu tượng',q:'Cung nào có biểu tượng là một đồ vật, không phải người hay con vật?',a:'Thiên Bình',w:['Bảo Bình','Song Tử','Xử Nữ'],e:'Thiên Bình là cái cân. Bảo Bình là người mang bình, Song Tử là cặp song sinh, Xử Nữ là trinh nữ.'},
+ {t:'Biểu tượng',q:'Cung nào có biểu tượng con dê biển, nửa dê nửa cá?',a:'Ma Kết',w:['Kim Ngưu','Bạch Dương','Song Ngư'],e:'Con dê biển vừa leo núi vừa lặn sâu, tượng trưng cho tham vọng và sự bền bỉ.'},
+ {t:'Biểu tượng',q:'Biểu tượng của Nhân Mã là gì?',a:'Sinh vật nửa người nửa ngựa cầm cung',w:['Người cầm giáo cưỡi ngựa','Con ngựa có cánh','Cung thủ đứng trên núi'],e:'Nhân Mã giương cung nhắm lên cao, tượng trưng cho khát vọng khám phá.'},
+ {t:'Biểu tượng',q:'Biểu tượng của Song Ngư là gì?',a:'Hai con cá bơi ngược chiều',w:['Hai con cá bơi song song','Một con cá voi','Con cá chép hóa rồng'],e:'Hai con cá bơi ngược chiều nhưng nối với nhau bằng một sợi dây, thể hiện tính hai mặt giữa mơ và thực.'},
+ {t:'Biểu tượng',q:'Biểu tượng của Xử Nữ thường là gì?',a:'Trinh nữ cầm bó lúa',w:['Nữ thần cầm cân','Cô gái cầm bình nước','Nàng tiên cá'],e:'Bó lúa gắn với mùa gặt, đúng thời điểm cuối hè của Xử Nữ.'},
+ {t:'Biểu tượng',q:'Cung nào đối diện Bạch Dương trên vòng hoàng đạo (cách 180°)?',a:'Thiên Bình',w:['Bọ Cạp','Cự Giải','Ma Kết'],e:'Hai cung đối diện cách nhau 6 cung. Bạch Dương thiên về cái tôi, Thiên Bình thiên về mối quan hệ.'},
+ {t:'Biểu tượng',q:'Cung nào đối diện Kim Ngưu trên vòng hoàng đạo?',a:'Bọ Cạp',w:['Sư Tử','Xử Nữ','Bảo Bình'],e:'Kim Ngưu và Bọ Cạp đều là cung Cố định, một bên Đất, một bên Nước.'},
+ {t:'Biểu tượng',q:'Cung nào đối diện Song Tử trên vòng hoàng đạo?',a:'Nhân Mã',w:['Song Ngư','Xử Nữ','Thiên Bình'],e:'Cặp đối diện Song Tử và Nhân Mã đều là cung Biến đổi, cùng thích học hỏi và khám phá.'},
+ // Thần thoại
+ {t:'Thần thoại',q:'Theo thần thoại Hy Lạp, Kim Ngưu gắn với vị thần nào hóa thành bò trắng?',a:'Zeus',w:['Poseidon','Apollo','Hermes'],e:'Zeus hóa thành bò trắng để đưa nàng Europa vượt biển đến đảo Crete.'},
+ {t:'Thần thoại',q:'Cặp song sinh trong cung Song Tử là ai?',a:'Castor và Pollux',w:['Romulus và Remus','Apollo và Artemis','Hypnos và Thanatos'],e:'Hai anh em không muốn xa nhau nên được Zeus đặt cạnh nhau trên bầu trời. Hai ngôi sao sáng nhất chòm Song Tử mang tên họ.'},
+ {t:'Thần thoại',q:'Bạch Dương gắn với con cừu nào trong thần thoại Hy Lạp?',a:'Con cừu có bộ lông vàng',w:['Con cừu của thần Pan','Con cừu đen của Hades','Con cừu biết nói của Athena'],e:'Bộ lông cừu vàng sau này là mục tiêu chuyến đi của Jason và các chiến binh Argonaut.'},
+ {t:'Thần thoại',q:'Sư Tử trong chòm sao được cho là con sư tử bị anh hùng nào hạ gục?',a:'Heracles',w:['Perseus','Achilles','Theseus'],e:'Sư tử Nemea có bộ da không gì xuyên thủng, là thử thách đầu tiên trong 12 kỳ công của Heracles.'},
+ {t:'Thần thoại',q:'Con cua của Cự Giải được nữ thần Hera sai đến để làm gì?',a:'Cản Heracles khi đánh rắn Hydra',w:['Canh giữ đỉnh Olympus','Bảo vệ đứa con của Poseidon','Đánh thức thần Mặt Trời'],e:'Con cua kẹp chân Heracles và bị ông giẫm nát. Hera đặt nó lên trời để ghi công.'},
+ {t:'Thần thoại',q:'Theo một truyền thuyết, con bọ cạp của cung Bọ Cạp được sai đến để hạ gục ai?',a:'Thợ săn Orion',w:['Vua Minos','Anh hùng Jason','Thần Ares'],e:'Vì vậy chòm Orion và chòm Bọ Cạp được đặt ở hai phía bầu trời, không bao giờ cùng xuất hiện.'}
 ];
+const ROUND=15;
 let tq;
-function triviaStart(){tq={list:shuffle(TQ).slice(0,10).map(q=>{const ord=shuffle(q.o.map((_,j)=>j));return{...q,o:ord.map(j=>q.o[j]),a:ord.indexOf(q.a)}}),i:0,score:0,picked:null};triviaRender()}
+function triviaStart(n){
+  n=n||tq?.n||ROUND;
+  const list=shuffle(TQ).slice(0,n).map(q=>({...q,o:shuffle([q.a,...q.w])}));
+  tq={list,n,i:0,score:0,picked:null,wrong:[]};triviaRender();
+}
 function triviaRender(){
   const box=$('#triviaBox'),L=tq.list;
   if(tq.i>=L.length){
-    const s=tq.score,msg=s>=9?'Nhà chiêm tinh thực thụ':s>=7?'Hiểu biết vững vàng':s>=5?'Khá đấy, ôn thêm chút nữa':'Mới nhập môn, thử lại nhé';
-    box.innerHTML=`<span class="label">Kết quả</span><h3 class="q-title" style="font-size:44px;margin-bottom:6px">${s} / ${L.length}</h3><p style="font-size:17px">${msg}</p><div class="row" style="margin-top:18px"><button class="btn" id="tAgain">Chơi lại với bộ câu mới</button></div>`;
-    $('#tAgain').onclick=triviaStart;return;
+    const s=tq.score,pct=s/L.length,msg=pct>=.9?'Nhà chiêm tinh thực thụ':pct>=.7?'Hiểu biết vững vàng':pct>=.5?'Khá đấy, ôn thêm chút nữa':'Mới nhập môn, thử lại nhé';
+    box.innerHTML=`<span class="label">Kết quả</span><h3 class="q-title" style="font-size:44px;margin-bottom:6px">${s} / ${L.length}</h3><p style="font-size:17px">${msg}</p>
+      ${tq.wrong.length?`<div style="margin-top:20px"><span class="label">Các câu chưa đúng</span><ul class="review">${tq.wrong.map(q=>`<li><strong>${esc(q.q)}</strong><br>Đáp án: ${esc(q.a)}. <span style="color:var(--muted)">${esc(q.e)}</span></li>`).join('')}</ul></div>`:''}
+      <div class="row" style="margin-top:18px"><button class="btn" id="tAgain">Chơi lại ${ROUND} câu mới</button><button class="btn ghost" id="tAll">Chơi toàn bộ ${TQ.length} câu</button></div>`;
+    $('#tAgain').onclick=()=>triviaStart(ROUND);$('#tAll').onclick=()=>triviaStart(TQ.length);return;
   }
-  const Q=L[tq.i],p=tq.picked;
+  const Q=L[tq.i],p=tq.picked,ai=Q.o.indexOf(Q.a);
   box.innerHTML=`
    <div class="progress"><i style="width:${tq.i/L.length*100}%"></i></div>
-   <div class="score-board"><span class="label">Câu ${tq.i+1} / ${L.length}</span><span class="label">Điểm: <strong>${tq.score}</strong></span></div>
+   <div class="score-board" style="justify-content:space-between;flex-wrap:wrap"><span class="label">Câu ${tq.i+1} / ${L.length} · ${Q.t}</span><span class="label">Điểm: <strong>${tq.score}</strong></span></div>
    <h3 class="q-title">${esc(Q.q)}</h3>
-   <div class="opts">${Q.o.map((o,j)=>`<button class="opt${p===null?'':j===Q.a?' right':j===p?' wrong':''}" data-j="${j}" ${p===null?'':'disabled'}>${esc(o)}</button>`).join('')}</div>
-   ${p===null?'':`<div class="explain" role="status"><strong>${p===Q.a?'Chính xác.':'Chưa đúng.'}</strong> ${Q.e}</div>`}
+   <div class="opts">${Q.o.map((o,j)=>`<button class="opt${p===null?'':j===ai?' right':j===p?' wrong':''}" data-j="${j}" ${p===null?'':'disabled'}>${esc(o)}</button>`).join('')}</div>
+   ${p===null?'':`<div class="explain" role="status"><strong>${p===ai?'Chính xác.':'Chưa đúng.'}</strong> ${esc(Q.e)}</div>`}
    <div class="quiz-foot"><span></span>${p===null?'<span class="label">Chọn một đáp án</span>':`<button class="btn" id="tNext">${tq.i+1<L.length?'Câu tiếp theo':'Xem kết quả'}</button>`}</div>`;
-  box.querySelectorAll('.opt:not([disabled])').forEach(b=>b.onclick=()=>{tq.picked=+b.dataset.j;if(tq.picked===Q.a)tq.score++;triviaRender()});
+  box.querySelectorAll('.opt:not([disabled])').forEach(b=>b.onclick=()=>{tq.picked=+b.dataset.j;if(tq.picked===ai)tq.score++;else tq.wrong.push(Q);triviaRender()});
   const nx=$('#tNext');if(nx){nx.onclick=()=>{tq.i++;tq.picked=null;triviaRender()};nx.focus()}
 }
 triviaStart();
