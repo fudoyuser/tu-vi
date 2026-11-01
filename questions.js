@@ -41,7 +41,7 @@
   const CATS = [
     {id:'nen-tang',name:'Kiến thức nền tảng',level:'Dễ',desc:'Thứ tự 12 cung, cung Mặt Trời, cung Mọc, đường hoàng đạo'},
     {id:'ngay-sinh',name:'Ngày sinh',level:'Dễ',desc:'Sinh ngày nào thuộc cung nào, ngày giáp ranh'},
-    {id:'bieu-tuong',name:'Biểu tượng & ký hiệu',level:'Dễ',desc:'Hình tượng, ký hiệu ♈♉♊, tên Latin, cung đối diện'},
+    {id:'bieu-tuong',name:'Biểu tượng & ký hiệu',level:'Dễ',desc:'Hình tượng, ký hiệu \u2648\uFE0E\u2649\uFE0E\u264A\uFE0E, tên Latin, cung đối diện'},
     {id:'tinh-cach',name:'Tính cách',level:'Dễ',desc:'Cung nào nổi tiếng với nét tính cách nào'},
     {id:'nguyen-to',name:'Nguyên tố & tính chất',level:'Vừa',desc:'Lửa, Đất, Khí, Nước; Thống lĩnh, Cố định, Biến đổi'},
     {id:'chu-tinh',name:'Hành tinh chủ quản',level:'Vừa',desc:'Chủ tinh cổ điển và hiện đại, ý nghĩa các hành tinh'},

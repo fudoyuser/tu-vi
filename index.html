@@ -158,19 +158,18 @@ input[type=date],input[type=number],select{background:var(--panel-2);border:1px 
 
 /* Đố vui */
 .score-board{display:flex;gap:18px;align-items:baseline}
-.cat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:16px}
-.cat[data-c="all"]{grid-column:span 2}
+.cat-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:16px}
 #triviaBox{scroll-margin-top:64px}
 .cat{display:grid;gap:4px;align-content:start;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:border-color .15s,background .15s}
 .cat:hover{border-color:var(--brass)}
 .cat[aria-pressed="true"]{border-color:var(--brass);background:var(--brass-soft)}
 .cat-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
 .cat-top strong{font-weight:600;font-size:14.5px}
-.cat-desc{font-size:12.5px;color:var(--muted);line-height:1.4}
+.cat-desc{font-size:12.5px;color:var(--muted);line-height:1.4;font-variant-emoji:text}
 .cat-n{font-size:12px;color:var(--brass);font-variant-numeric:tabular-nums}
 .lvl{font-size:11px;padding:1px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
-.lvl-0{color:var(--ok)}.lvl-1{color:var(--brass)}.lvl-2{color:var(--bad)}.lvl-3{color:var(--muted)}
-@media (max-width:900px) and (min-width:761px){.cat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.cat[data-c="all"]{grid-column:span 3}}
+.lvl-0{color:var(--ok)}.lvl-1{color:var(--brass)}.lvl-2{color:var(--bad)}
+@media (max-width:1000px){.cat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:760px){.cat-grid{grid-template-columns:1fr 1fr}.cat-desc{display:none}}
 .review{margin:8px 0 0;padding-left:18px;display:grid;gap:10px;font-size:14px}
 .score-board strong{font-family:var(--f-display);font-size:28px;font-weight:500;font-variant-numeric:tabular-nums}
@@ -280,7 +279,7 @@ footer{border-top:1px solid var(--line);padding-block:24px 40px;color:var(--mute
   <section class="view" id="v-do-vui">
     <div class="view-head">
       <h2>Bạn hiểu cung hoàng đạo đến đâu?</h2>
-      <p class="intro">Chọn một trong 10 mảng kiến thức hoặc trộn tất cả. Mỗi lượt 15 câu ngẫu nhiên, trả lời xong mỗi câu sẽ có giải thích.</p>
+      <p class="intro">Chọn một trong 10 mảng kiến thức. Mỗi lượt 15 câu ngẫu nhiên, trả lời xong mỗi câu sẽ có giải thích.</p>
     </div>
     <div class="cat-grid" id="catGrid" role="group" aria-label="Chọn mảng kiến thức"></div>
     <div class="panel" id="triviaBox"></div>
@@ -632,16 +631,16 @@ pairCalc();
 
 /* ---------- ĐỐ VUI ---------- */
 const ZQ=window.ZQUIZ, ROUND=15;
-let tq, cat='all';
-const catName=id=>id==='all'?'Trộn tất cả':ZQ.cats.find(c=>c.id===id).name;
+let tq, cat=ZQ.cats[0].id;
+const catName=id=>ZQ.cats.find(c=>c.id===id).name;
 function renderCats(){
-  const cnt=id=>ZQ.questions.filter(q=>id==='all'||q.c===id).length;
-  $('#catGrid').innerHTML=[{id:'all',name:'Trộn tất cả',level:'Mọi mức',desc:'Câu hỏi ngẫu nhiên từ cả 10 mảng'},...ZQ.cats].map(c=>
-    `<button type="button" class="cat" data-c="${c.id}" aria-pressed="${c.id===cat}"><span class="cat-top"><strong>${c.name}</strong><span class="lvl lvl-${c.level==='Dễ'?0:c.level==='Vừa'?1:c.level==='Khó'?2:3}">${c.level}</span></span><span class="cat-desc">${c.desc}</span><span class="cat-n">${cnt(c.id)} câu</span></button>`).join('');
+  const cnt=id=>ZQ.questions.filter(q=>q.c===id).length;
+  $('#catGrid').innerHTML=ZQ.cats.map(c=>
+    `<button type="button" class="cat" data-c="${c.id}" aria-pressed="${c.id===cat}"><span class="cat-top"><strong>${c.name}</strong><span class="lvl lvl-${c.level==='Dễ'?0:c.level==='Vừa'?1:2}">${c.level}</span></span><span class="cat-desc">${c.desc}</span><span class="cat-n">${cnt(c.id)} câu</span></button>`).join('');
 }
 $('#catGrid').addEventListener('click',e=>{const b=e.target.closest('.cat');if(!b)return;cat=b.dataset.c;renderCats();triviaStart(ROUND);$('#triviaBox').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})});
 function triviaStart(n){
-  const pool=ZQ.questions.filter(q=>cat==='all'||q.c===cat);
+  const pool=ZQ.questions.filter(q=>q.c===cat);
   n=Math.min(n||ROUND,pool.length);
   const list=shuffle(pool).slice(0,n).map(q=>({...q,o:shuffle([q.a,...q.w])}));
   tq={list,pool:pool.length,i:0,score:0,picked:null,wrong:[]};triviaRender();
