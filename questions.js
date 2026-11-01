@@ -40,7 +40,7 @@
 
   const CATS = [
     {id:'nen-tang',name:'Kiến thức nền tảng',level:'Dễ',desc:'Thứ tự 12 cung, cung Mặt Trời, cung Mọc, đường hoàng đạo'},
-    {id:'ngay-sinh',name:'Ngày sinh',level:'Dễ',desc:'Sinh ngày nào thuộc cung nào, ngày giáp ranh'},
+    {id:'ngay-sinh',name:'Ngày sinh',level:'Dễ',desc:'Khoảng ngày của từng cung, mốc bắt đầu và kết thúc'},
     {id:'bieu-tuong',name:'Biểu tượng & ký hiệu',level:'Dễ',desc:'Hình tượng, ký hiệu \u2648\uFE0E\u2649\uFE0E\u264A\uFE0E, tên Latin, cung đối diện'},
     {id:'tinh-cach',name:'Tính cách',level:'Dễ',desc:'Cung nào nổi tiếng với nét tính cách nào'},
     {id:'nguyen-to',name:'Nguyên tố & tính chất',level:'Vừa',desc:'Lửa, Đất, Khí, Nước; Thống lĩnh, Cố định, Biến đổi'},
@@ -67,12 +67,13 @@
     add('nen-tang', `${z.n} là cung thứ mấy trên vòng hoàng đạo?`, `Thứ ${i+1}`, Z.map((_,k)=>`Thứ ${k+1}`), `Thứ tự bắt đầu từ Bạch Dương (thứ 1) và kết thúc ở Song Ngư (thứ 12). ${z.n} đứng thứ ${i+1}.`);
     add('nen-tang', `Sau khi rời cung ${z.n}, Mặt Trời đi vào cung nào?`, next.n, [prev.n, opp.n, ...others], `Thứ tự là ${prev.n} → ${z.n} → ${next.n}.`);
     add('nen-tang', `Cung nào đứng ngay trước ${z.n}?`, prev.n, [next.n, opp.n, ...others], `${prev.n} (${range(prev)}) đứng ngay trước ${z.n} (${range(z)}).`);
-    // Ngày sinh
-    add('ngay-sinh', `Cung ${z.n} kéo dài trong khoảng thời gian nào?`, range(z), Z.map(range), `${z.n}: ${range(z)}. Ngày có thể lệch 1 ngày tùy năm vì Mặt Trời không vào cung đúng cùng một giờ mỗi năm.`);
-    add('ngay-sinh', `Người sinh ngày ${dm(z.s)} thuộc cung nào?`, z.n, [prev.n, next.n, ...others], `${dm(z.s)} là ngày đầu tiên của ${z.n}. Ngày trước đó vẫn thuộc ${prev.n}.`);
-    add('ngay-sinh', `Người sinh ngày ${dm(z.e)} thuộc cung nào?`, z.n, [next.n, prev.n, ...others], `${dm(z.e)} là ngày cuối cùng của ${z.n}. Ngày hôm sau đã sang ${next.n}.`);
-    add('ngay-sinh', `Người sinh ngày ${dm(shift(z.s,12))} thuộc cung nào?`, z.n, [prev.n, next.n, ...others], `${z.n} kéo dài từ ${range(z)}.`);
-    add('ngay-sinh', `Ngày ${dm(shift(z.s,-1))} là ngày cuối của cung nào?`, prev.n, [z.n, next.n, ...others], `${prev.n} kết thúc ngày ${dm(prev.e)}, hôm sau bắt đầu ${z.n}.`);
+    // Ngày sinh: chỉ hỏi khoảng ngày, mốc bắt đầu, mốc kết thúc
+    const R = `${z.n} kéo dài từ ${dm(z.s)} đến ${dm(z.e)}.`;
+    add('ngay-sinh', `Cung ${z.n} kéo dài trong khoảng thời gian nào?`, range(z), [range(prev), range(next), ...Z.map(range)], R);
+    add('ngay-sinh', `Khoảng ${range(z)} là của cung nào?`, z.n, [prev.n, next.n, ...others], R);
+    add('ngay-sinh', `Cung ${z.n} bắt đầu từ ngày nào?`, dm(z.s), [dm(shift(z.s,-2)), dm(shift(z.s,1)), dm(shift(z.s,2)), dm(shift(z.s,-1))].filter(x=>x!==dm(z.s)), `${R} Ngày trước đó vẫn thuộc ${prev.n}.`);
+    add('ngay-sinh', `Cung ${z.n} kết thúc vào ngày nào?`, dm(z.e), [dm(shift(z.e,1)), dm(shift(z.e,-1)), dm(shift(z.e,2)), dm(shift(z.e,-2))], `${R} Ngày hôm sau đã sang ${next.n} (${range(next)}).`);
+    add('ngay-sinh', `Cung nào bắt đầu ngay sau khi ${z.n} (${range(z)}) kết thúc?`, `${next.n} (${range(next)})`, Z.filter(x=>x!==next&&x!==z).map(x=>`${x.n} (${range(x)})`), `${z.n} kết thúc ${dm(z.e)}, ${next.n} bắt đầu ${dm(next.s)}.`);
     // Biểu tượng
     add('bieu-tuong', `Biểu tượng của cung ${z.n} là gì?`, z.sym, Z.map(x=>x.sym), `${z.n} được tượng trưng bằng ${z.sym.toLowerCase()}.`);
     add('bieu-tuong', `Ký hiệu ${G(z.g)} là của cung nào?`, z.n, [prev.n, next.n, ...others], `${G(z.g)} là ký hiệu của ${z.n}.`);
@@ -121,20 +122,22 @@
       ['Cung nào là cung cuối cùng (thứ 12) của vòng hoàng đạo?','Song Ngư',['Ma Kết','Bảo Bình','Bọ Cạp'],'Song Ngư khép lại vòng, sau đó Mặt Trời trở lại Bạch Dương.']
     ],
     'ngay-sinh': [
-      ['Người sinh ngày Valentine 14/2 thuộc cung nào?','Bảo Bình',['Song Ngư','Ma Kết','Bạch Dương'],'Bảo Bình từ 20/1 đến 18/2. Song Ngư bắt đầu từ 19/2.'],
-      ['Người sinh ngày Quốc tế Phụ nữ 8/3 thuộc cung nào?','Song Ngư',['Bạch Dương','Bảo Bình','Kim Ngưu'],'Song Ngư từ 19/2 đến 20/3.'],
-      ['Người sinh ngày Giáng sinh 25/12 thuộc cung nào?','Ma Kết',['Nhân Mã','Bảo Bình','Bọ Cạp'],'Ma Kết bắt đầu từ 22/12.'],
-      ['Người sinh ngày Quốc khánh 2/9 thuộc cung nào?','Xử Nữ',['Sư Tử','Thiên Bình','Bọ Cạp'],'Xử Nữ từ 23/8 đến 22/9.'],
-      ['Người sinh ngày Tết Dương lịch 1/1 thuộc cung nào?','Ma Kết',['Bảo Bình','Nhân Mã','Song Ngư'],'Ma Kết kéo dài từ 22/12 đến 19/1.'],
-      ['Người sinh ngày Quốc tế Thiếu nhi 1/6 thuộc cung nào?','Song Tử',['Kim Ngưu','Cự Giải','Sư Tử'],'Song Tử từ 21/5 đến 20/6.'],
-      ['Người sinh ngày Nhà giáo Việt Nam 20/11 thuộc cung nào?','Bọ Cạp',['Nhân Mã','Thiên Bình','Ma Kết'],'Bọ Cạp từ 23/10 đến 21/11, Nhân Mã bắt đầu từ 22/11.'],
-      ['Người sinh ngày Cá tháng Tư 1/4 thuộc cung nào?','Bạch Dương',['Kim Ngưu','Song Ngư','Song Tử'],'Bạch Dương từ 21/3 đến 19/4.'],
-      ['Người sinh ngày Halloween 31/10 thuộc cung nào?','Bọ Cạp',['Thiên Bình','Nhân Mã','Xử Nữ'],'Bọ Cạp bắt đầu từ 23/10.'],
-      ['Người sinh ngày 30/4 thuộc cung nào?','Kim Ngưu',['Bạch Dương','Song Tử','Cự Giải'],'Kim Ngưu từ 20/4 đến 20/5.'],
-      ['Người sinh ngày 29/2 (năm nhuận) thuộc cung nào?','Song Ngư',['Bảo Bình','Bạch Dương','Ma Kết'],'29/2 nằm trong khoảng 19/2 – 20/3 của Song Ngư.'],
-      ['Tháng 7 dương lịch có những cung nào?','Cự Giải và Sư Tử',['Song Tử và Cự Giải','Sư Tử và Xử Nữ','Chỉ có Cự Giải'],'Cự Giải kết thúc 22/7, Sư Tử bắt đầu 23/7.'],
-      ['Tháng 12 dương lịch có những cung nào?','Nhân Mã và Ma Kết',['Bọ Cạp và Nhân Mã','Ma Kết và Bảo Bình','Chỉ có Nhân Mã'],'Nhân Mã kết thúc 21/12, Ma Kết bắt đầu 22/12.'],
-      ['Cung nào kéo dài qua năm mới dương lịch?','Ma Kết',['Nhân Mã','Bảo Bình','Song Ngư'],'Ma Kết bắt đầu 22/12 năm trước và kết thúc 19/1 năm sau.']
+      ['Tháng 1 dương lịch có những cung nào?','Ma Kết (đến 19/1) và Bảo Bình (từ 20/1)',['Nhân Mã (đến 21/1) và Ma Kết (từ 22/1)','Bảo Bình (đến 18/1) và Song Ngư (từ 19/1)','Ma Kết (đến 22/1) và Bảo Bình (từ 23/1)'],'Ma Kết 22/12 – 19/1, Bảo Bình 20/1 – 18/2.'],
+      ['Tháng 2 dương lịch có những cung nào?','Bảo Bình (đến 18/2) và Song Ngư (từ 19/2)',['Bảo Bình (đến 20/2) và Song Ngư (từ 21/2)','Ma Kết (đến 18/2) và Bảo Bình (từ 19/2)','Song Ngư (đến 18/2) và Bạch Dương (từ 19/2)'],'Bảo Bình 20/1 – 18/2, Song Ngư 19/2 – 20/3.'],
+      ['Tháng 3 dương lịch có những cung nào?','Song Ngư (đến 20/3) và Bạch Dương (từ 21/3)',['Song Ngư (đến 22/3) và Bạch Dương (từ 23/3)','Bảo Bình (đến 20/3) và Song Ngư (từ 21/3)','Bạch Dương (đến 20/3) và Kim Ngưu (từ 21/3)'],'Song Ngư 19/2 – 20/3, Bạch Dương 21/3 – 19/4.'],
+      ['Tháng 4 dương lịch có những cung nào?','Bạch Dương (đến 19/4) và Kim Ngưu (từ 20/4)',['Bạch Dương (đến 21/4) và Kim Ngưu (từ 22/4)','Song Ngư (đến 19/4) và Bạch Dương (từ 20/4)','Kim Ngưu (đến 19/4) và Song Tử (từ 20/4)'],'Bạch Dương 21/3 – 19/4, Kim Ngưu 20/4 – 20/5.'],
+      ['Tháng 5 dương lịch có những cung nào?','Kim Ngưu (đến 20/5) và Song Tử (từ 21/5)',['Kim Ngưu (đến 22/5) và Song Tử (từ 23/5)','Bạch Dương (đến 20/5) và Kim Ngưu (từ 21/5)','Song Tử (đến 20/5) và Cự Giải (từ 21/5)'],'Kim Ngưu 20/4 – 20/5, Song Tử 21/5 – 20/6.'],
+      ['Tháng 6 dương lịch có những cung nào?','Song Tử (đến 20/6) và Cự Giải (từ 21/6)',['Song Tử (đến 22/6) và Cự Giải (từ 23/6)','Kim Ngưu (đến 20/6) và Song Tử (từ 21/6)','Cự Giải (đến 20/6) và Sư Tử (từ 21/6)'],'Song Tử 21/5 – 20/6, Cự Giải 21/6 – 22/7.'],
+      ['Tháng 7 dương lịch có những cung nào?','Cự Giải (đến 22/7) và Sư Tử (từ 23/7)',['Cự Giải (đến 20/7) và Sư Tử (từ 21/7)','Song Tử (đến 22/7) và Cự Giải (từ 23/7)','Sư Tử (đến 22/7) và Xử Nữ (từ 23/7)'],'Cự Giải 21/6 – 22/7, Sư Tử 23/7 – 22/8.'],
+      ['Tháng 8 dương lịch có những cung nào?','Sư Tử (đến 22/8) và Xử Nữ (từ 23/8)',['Sư Tử (đến 20/8) và Xử Nữ (từ 21/8)','Cự Giải (đến 22/8) và Sư Tử (từ 23/8)','Xử Nữ (đến 22/8) và Thiên Bình (từ 23/8)'],'Sư Tử 23/7 – 22/8, Xử Nữ 23/8 – 22/9.'],
+      ['Tháng 9 dương lịch có những cung nào?','Xử Nữ (đến 22/9) và Thiên Bình (từ 23/9)',['Xử Nữ (đến 20/9) và Thiên Bình (từ 21/9)','Sư Tử (đến 22/9) và Xử Nữ (từ 23/9)','Thiên Bình (đến 22/9) và Bọ Cạp (từ 23/9)'],'Xử Nữ 23/8 – 22/9, Thiên Bình 23/9 – 22/10.'],
+      ['Tháng 10 dương lịch có những cung nào?','Thiên Bình (đến 22/10) và Bọ Cạp (từ 23/10)',['Thiên Bình (đến 20/10) và Bọ Cạp (từ 21/10)','Xử Nữ (đến 22/10) và Thiên Bình (từ 23/10)','Bọ Cạp (đến 22/10) và Nhân Mã (từ 23/10)'],'Thiên Bình 23/9 – 22/10, Bọ Cạp 23/10 – 21/11.'],
+      ['Tháng 11 dương lịch có những cung nào?','Bọ Cạp (đến 21/11) và Nhân Mã (từ 22/11)',['Bọ Cạp (đến 23/11) và Nhân Mã (từ 24/11)','Thiên Bình (đến 21/11) và Bọ Cạp (từ 22/11)','Nhân Mã (đến 21/11) và Ma Kết (từ 22/11)'],'Bọ Cạp 23/10 – 21/11, Nhân Mã 22/11 – 21/12.'],
+      ['Tháng 12 dương lịch có những cung nào?','Nhân Mã (đến 21/12) và Ma Kết (từ 22/12)',['Nhân Mã (đến 24/12) và Ma Kết (từ 25/12)','Bọ Cạp (đến 21/12) và Nhân Mã (từ 22/12)','Ma Kết (đến 21/12) và Bảo Bình (từ 22/12)'],'Nhân Mã 22/11 – 21/12, Ma Kết 22/12 – 19/1.'],
+      ['Cung nào kéo dài qua năm mới dương lịch?','Ma Kết (22/12 – 19/1)',['Nhân Mã (22/11 – 21/12)','Bảo Bình (20/1 – 18/2)','Song Ngư (19/2 – 20/3)'],'Ma Kết bắt đầu 22/12 năm trước và kết thúc 19/1 năm sau.'],
+      ['Mốc ngày bắt đầu các cung thường rơi vào khoảng nào trong tháng?','Từ ngày 19 đến 23',['Từ ngày 1 đến 5','Từ ngày 10 đến 15','Từ ngày 25 đến 30'],'Mỗi cung bắt đầu trong khoảng 19–23 của tháng, quanh các mốc xuân phân, hạ chí, thu phân, đông chí. Nhớ điều này giúp đoán gần đúng cung của bất kỳ ngày nào.'],
+      ['Cung nào bắt đầu sớm nhất trong tháng (ngày 19)?','Song Ngư (19/2 – 20/3)',['Bạch Dương (21/3 – 19/4)','Bảo Bình (20/1 – 18/2)','Kim Ngưu (20/4 – 20/5)'],'Song Ngư bắt đầu ngày 19/2, sớm nhất trong 12 mốc.'],
+      ['Những cung nào bắt đầu vào ngày 23?','Sư Tử, Xử Nữ, Thiên Bình, Bọ Cạp',['Bạch Dương, Kim Ngưu, Song Tử, Cự Giải','Nhân Mã, Ma Kết, Bảo Bình, Song Ngư','Song Tử, Cự Giải, Sư Tử, Xử Nữ'],'Sư Tử 23/7, Xử Nữ 23/8, Thiên Bình 23/9, Bọ Cạp 23/10.']
     ],
     'bieu-tuong': [
       ['Cung nào có biểu tượng là một đồ vật, không phải người hay con vật?','Thiên Bình',['Bảo Bình','Song Tử','Xử Nữ'],'Thiên Bình là cái cân. Các cung khác đều là người, con vật hoặc sinh vật huyền thoại.'],
