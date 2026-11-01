@@ -19,3 +19,5 @@ Mở `questions.js`, thêm một dòng vào mảng của mảng kiến thức t�
 ```
 
 Câu hỏi tra cứu (ngày sinh, chủ tinh, nguyên tố, ký hiệu…) được sinh tự động từ bảng `Z`.
+
+Sau khi sửa `questions.js`, đổi số phiên bản trong dòng `<script src="questions.js?v=...">` của `index.html` để trình duyệt tải bản mới ngay.
