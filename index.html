@@ -279,7 +279,7 @@ footer{border-top:1px solid var(--line);padding-block:24px 40px;color:var(--mute
   <section class="view" id="v-do-vui">
     <div class="view-head">
       <h2>Bạn hiểu cung hoàng đạo đến đâu?</h2>
-      <p class="intro">Chọn một trong 10 mảng kiến thức. Mỗi lượt 15 câu ngẫu nhiên, trả lời xong mỗi câu sẽ có giải thích.</p>
+      <p class="intro">Chọn một trong 10 mảng kiến thức. Mỗi lượt hỏi toàn bộ câu của mảng theo thứ tự ngẫu nhiên, trả lời xong mỗi câu sẽ có giải thích. Muốn dừng sớm thì bấm "Kết thúc lượt".</p>
     </div>
     <div class="cat-grid" id="catGrid" role="group" aria-label="Chọn mảng kiến thức"></div>
     <div class="panel" id="triviaBox"></div>
@@ -630,7 +630,7 @@ function pairCalc(){
 pairCalc();
 
 /* ---------- ĐỐ VUI ---------- */
-const ZQ=window.ZQUIZ, ROUND=15;
+const ZQ=window.ZQUIZ;
 let tq, cat=ZQ.cats[0].id;
 const catName=id=>ZQ.cats.find(c=>c.id===id).name;
 function renderCats(){
@@ -638,11 +638,10 @@ function renderCats(){
   $('#catGrid').innerHTML=ZQ.cats.map(c=>
     `<button type="button" class="cat" data-c="${c.id}" aria-pressed="${c.id===cat}"><span class="cat-top"><strong>${c.name}</strong><span class="lvl lvl-${c.level==='Dễ'?0:c.level==='Vừa'?1:2}">${c.level}</span></span><span class="cat-desc">${c.desc}</span><span class="cat-n">${cnt(c.id)} câu</span></button>`).join('');
 }
-$('#catGrid').addEventListener('click',e=>{const b=e.target.closest('.cat');if(!b)return;cat=b.dataset.c;renderCats();triviaStart(ROUND);$('#triviaBox').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})});
-function triviaStart(n){
+$('#catGrid').addEventListener('click',e=>{const b=e.target.closest('.cat');if(!b)return;cat=b.dataset.c;renderCats();triviaStart();$('#triviaBox').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})});
+function triviaStart(){
   const pool=ZQ.questions.filter(q=>q.c===cat);
-  n=Math.min(n||ROUND,pool.length);
-  const list=shuffle(pool).slice(0,n).map(q=>({...q,o:shuffle([q.a,...q.w])}));
+  const list=shuffle(pool).map(q=>({...q,o:shuffle([q.a,...q.w])}));
   tq={list,pool:pool.length,i:0,score:0,picked:null,wrong:[]};triviaRender();
 }
 function triviaRender(){
@@ -651,8 +650,8 @@ function triviaRender(){
     const s=tq.score,pct=s/L.length,msg=pct>=.9?'Nhà chiêm tinh thực thụ':pct>=.7?'Hiểu biết vững vàng':pct>=.5?'Khá đấy, ôn thêm chút nữa':'Mới nhập môn, thử lại nhé';
     box.innerHTML=`<span class="label">Kết quả · ${catName(cat)}</span><h3 class="q-title" style="font-size:44px;margin-bottom:6px">${s} / ${L.length}</h3><p style="font-size:17px">${msg}</p>
       ${tq.wrong.length?`<div style="margin-top:20px"><span class="label">Các câu chưa đúng</span><ul class="review">${tq.wrong.map(q=>`<li><strong>${esc(q.q)}</strong><br>Đáp án: ${esc(q.a)}. <span style="color:var(--muted)">${esc(q.e)}</span></li>`).join('')}</ul></div>`:''}
-      <div class="row" style="margin-top:18px"><button class="btn" id="tAgain">Chơi tiếp ${Math.min(ROUND,tq.pool)} câu mới</button>${tq.pool>ROUND?`<button class="btn ghost" id="tAll">Chơi toàn bộ ${tq.pool} câu</button>`:''}</div>`;
-    $('#tAgain').onclick=()=>triviaStart(ROUND);if($('#tAll'))$('#tAll').onclick=()=>triviaStart(tq.pool);return;
+      <div class="row" style="margin-top:18px"><button class="btn" id="tAgain">Chơi lại mảng này (${tq.pool} câu)</button></div>`;
+    $('#tAgain').onclick=()=>triviaStart();return;
   }
   const Q=L[tq.i],p=tq.picked,ai=Q.o.indexOf(Q.a);
   box.innerHTML=`

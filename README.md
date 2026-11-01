@@ -2,7 +2,7 @@
 
 Website quiz cung hoàng đạo và tử vi, gồm 4 mục:
 
-- **Quiz kiến thức** (mục chính): hơn 400 câu chia 10 mảng: nền tảng, ngày sinh, biểu tượng, tính cách, nguyên tố, hành tinh chủ quản, lịch sử, thần thoại, thiên văn, 12 nhà & góc chiếu. Mỗi lượt 15 câu.
+- **Quiz kiến thức** (mục chính): hơn 400 câu chia 10 mảng: nền tảng, ngày sinh, biểu tượng, tính cách, nguyên tố, hành tinh chủ quản, lịch sử, thần thoại, thiên văn, 12 nhà & góc chiếu. Mỗi lượt hỏi toàn bộ câu của mảng đã chọn.
 
 - **Quiz tính cách**: 8 câu hỏi, cho ra cung hoàng đạo hợp với tính cách nhất.
 - **Tử vi hằng ngày**: nhập ngày sinh để xem cung, tử vi hôm nay/ngày mai, tuổi âm lịch, mệnh nạp âm, tam hợp, tứ hành xung.
